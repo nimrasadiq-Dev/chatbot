@@ -1,6 +1,6 @@
 import uuid
 import streamlit as st
-import google-generativeai as genai
+import google.generativeai as genai
 from PIL import Image
 
 # 1. Page Configuration
