@@ -1,6 +1,7 @@
 import uuid
 import streamlit as st
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from PIL import Image
 
 # 1. Page Configuration
@@ -109,7 +110,7 @@ if not api_key:
     st.info("👈 Please enter API Key in sidebar to start.")
     st.stop()
 
-client = genai.Client(api_key=api_key)
+genai.configure(api_key=api_key)
 active_chat = st.session_state.chats[st.session_state.active_chat_id]
 messages = active_chat["messages"]
 
