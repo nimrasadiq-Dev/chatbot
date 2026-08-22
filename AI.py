@@ -73,8 +73,13 @@ if st.sidebar.button("🚪 Logout", use_container_width=True):
 
 st.sidebar.markdown("---")
 st.sidebar.title("⚙️ Settings")
-raw_api_key = st.sidebar.text_input("Enter Gemini API Key:", type="password")
-api_key = raw_api_key.strip() if raw_api_key else ""
+# Pehle Streamlit Secrets check karein, agar na mile toh user input lein
+secret_key = st.secrets.get("GEMINI_API_KEY", "")
+if secret_key:
+    api_key = secret_key
+else:
+    raw_api_key = st.sidebar.text_input("Enter Gemini API Key:", type="password")
+    api_key = raw_api_key.strip() if raw_api_key else ""
 
 selected_model = st.sidebar.selectbox("Model:", ["gemini-3.6-flash", "gemini-2.0-flash", "gemini-1.5-flash"])
 
