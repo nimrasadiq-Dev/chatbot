@@ -114,7 +114,9 @@ if not api_key:
     st.info("👈 Please enter API Key in sidebar to start.")
     st.stop()
 
-genai.configure(api_key=api_key)
+import os
+os.environ["GEMINI_API_KEY"] = api_key
+genai.configure(api_key=api_key, client_options={"api_endpoint": "generativelanguage.googleapis.com"})
 active_chat = st.session_state.chats[st.session_state.active_chat_id]
 messages = active_chat["messages"]
 
@@ -152,15 +154,15 @@ if prompt or file or cam_photo or audio:
     text = prompt if prompt else "Analyze this attachment."
     payload.append(text)
     
-    # User ka message add karein
     messages.append({"role": "user", "content": text})
     
     try:
-        # Client ki bajaye Standard Model Call
-        model = genai.GenerativeModel(selected_model)
+        # Standard GenerativeModel with Transport Configuration
+        model = genai.GenerativeModel(
+            model_name=selected_model if selected_model else "gemini-1.5-flash"
+        )
         response = model.generate_content(payload)
         
-        # AI ka response save karein
         messages.append({"role": "assistant", "content": response.text})
         st.rerun()
     except Exception as e:
