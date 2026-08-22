@@ -142,24 +142,26 @@ with col_chat:
 # Execution Logic
 if prompt or file or cam_photo or audio:
     payload = []
-    if file: payload.append(Image.open(file) if file.type.startswith("image") else file.read().decode('utf-8'))
-    if cam_photo: payload.append(Image.open(cam_photo))
-    if audio: payload.append(types.Part.from_bytes(data=audio.read(), mime_type="audio/wav"))
+    if file: 
+        payload.append(Image.open(file) if file.type.startswith("image") else file.read().decode('utf-8'))
+    if cam_photo: 
+        payload.append(Image.open(cam_photo))
+    if audio: 
+        payload.append(types.Part.from_bytes(data=audio.read(), mime_type="audio/wav"))
     
     text = prompt if prompt else "Analyze this attachment."
     payload.append(text)
     
-    if len(messages) == 0:
-        active_chat["title"] = text[:15] + "..." if len(text) > 15 else text
-
+    # User ka message add karein
     messages.append({"role": "user", "content": text})
-    with st.chat_message("user"): st.markdown(text)
     
-    with st.chat_message("assistant"):
-        with st.spinner("Generating..."):
-            try:
-                response = client.models.generate_content(model=selected_model, contents=payload)
-                st.markdown(response.text)
-                messages.append({"role": "assistant", "content": response.text})
-            except Exception as e:
-                st.error(f"API Error: {e}")
+    try:
+        # Client ki bajaye Standard Model Call
+        model = genai.GenerativeModel(selected_model)
+        response = model.generate_content(payload)
+        
+        # AI ka response save karein
+        messages.append({"role": "assistant", "content": response.text})
+        st.rerun()
+    except Exception as e:
+        st.error(f"API Error: {e}")
