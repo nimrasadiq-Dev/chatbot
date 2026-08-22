@@ -1,7 +1,6 @@
 import uuid
 import streamlit as st
 import google.generativeai as genai
-from google.genai import types
 from PIL import Image
 
 # 1. Page Configuration
